@@ -18,12 +18,17 @@ public class Main {
     public static void main(String[] args){
 
         String line = InputHelper.inputSting("Введите строку");
+        System.out.println(translate(line));
 
+
+    }
+
+    public static String translate(String str){
         try {
             RestTemplate template = new RestTemplate();
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
                     .queryParam("key", API_KEY)
-                    .queryParam("text", line)
+                    .queryParam("text", str)
                     .queryParam("lang", "ru");
 
             ResponseEntity<ResponseModel> response =
@@ -31,16 +36,16 @@ public class Main {
 
             if(response.getStatusCodeValue() != 200){
                 System.out.println("Неожиданный ответ от сервера");
-                return;
+                return null;
             }
 
-            System.out.println(response.getBody().toString());
+            return response.getBody().toString();
         }catch (UnsupportedEncodingException e){
             System.out.println("ошибка в кодировке" + e.getMessage());
         }catch(Exception e){
             System.out.println(e);
         }
-
+        return null;
     }
 
 
