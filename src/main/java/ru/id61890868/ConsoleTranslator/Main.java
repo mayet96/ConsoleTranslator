@@ -1,6 +1,5 @@
 package ru.id61890868.ConsoleTranslator;
 
-import com.sun.xml.internal.bind.v2.runtime.output.Encoded;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -12,40 +11,48 @@ import java.net.URLDecoder;
 public class Main {
 
     private static final String url = "https://translate.yandex.net/api/v1.5/tr.json/translate";
-    private static final String API_KEY= "trnsl.1.1.20190205T155945Z.1aefd439be03bf8e." +
+    //API_KEY яндекс.переводчика (тестовый, валиден до 25.02.2019)
+    private static final String API_KEY = "trnsl.1.1.20190205T155945Z.1aefd439be03bf8e." +
             "4f37ccec873aac57fcc5db89a755526efc4a94ab";
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         String line = InputHelper.inputSting("Введите строку");
-        System.out.println(translate(line));
+        try {
+            System.out.println(translate(line));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
 
     }
 
-    public static String translate(String str){
+    /**
+     * @param str строка, которая будет переведена на русский язык
+     * @return null при
+     */
+    static String translate(String str) throws Exception {
         try {
             RestTemplate template = new RestTemplate();
+
+            //Составляем url с параметрами
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
                     .queryParam("key", API_KEY)
                     .queryParam("text", str)
                     .queryParam("lang", "ru");
 
+            //получаем ответ, отправив GET запрос по созданному url
             ResponseEntity<ResponseModel> response =
                     template.getForEntity(URLDecoder.decode(builder.toUriString(), "UTF-8"), ResponseModel.class);
 
-            if(response.getStatusCodeValue() != 200){
-                System.out.println("Неожиданный ответ от сервера");
-                return null;
+            //если статус-код не 200, значит перевод выполнен не был.
+            if (response.getStatusCodeValue() != 200) {
+                throw new Exception("Неожиданный ответ от сервера");
             }
-
             return response.getBody().toString();
-        }catch (UnsupportedEncodingException e){
-            System.out.println("ошибка в кодировке" + e.getMessage());
-        }catch(Exception e){
-            System.out.println(e);
+        } catch (UnsupportedEncodingException e) {
+            throw new Exception("Ошибка в кодировке: ", e);
         }
-        return null;
     }
 
 

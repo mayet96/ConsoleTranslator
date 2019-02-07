@@ -6,9 +6,14 @@ import java.io.InputStreamReader;
 
 public class InputHelper {
 
-    public static String inputSting(String prompt){
+    /**
+     * Получить строку из консоли
+     * @param prompt подпись ожидаемых данных("prompt: inputData")
+     * @return полученная строка
+     */
+    static String inputSting(String prompt){
         String inputLine = null;
-        System.out.print(prompt + ": ");
+        System.out.print(makePrompt(prompt));
         try{
             BufferedReader input = new BufferedReader(
                     new InputStreamReader(System.in)
@@ -25,5 +30,13 @@ public class InputHelper {
 
     public static String inputSting(){
         return inputSting("");
+    }
+
+    private static String makePrompt(String prompt){
+        if(prompt == null || prompt.equals("")){
+            return "";
+        }else{
+            return prompt + ": ";
+        }
     }
 }

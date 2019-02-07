@@ -9,9 +9,10 @@ public class ResponseModel {
     }
 
     private Integer code;
+    //язык, с какого и на какой был осуществлен перево
     private String lang;
+    //переведенный текст
     private List<String> text;
-
 
     public Integer getCode() {
         return code;
